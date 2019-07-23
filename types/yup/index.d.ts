@@ -104,6 +104,8 @@ export interface MixedSchema<T = any> extends Schema<T> {
     nullable(isNullable?: boolean): MixedSchema<T>;
     required(message?: TestOptionsMessage): MixedSchema<Exclude<T, undefined>>;
     notRequired(): MixedSchema<T | undefined>;
+    concat(schema: this): this;
+    concat<U >(schema: MixedSchema<U>): MixedSchema<T | U>;
 }
 
 export interface StringSchemaConstructor {
@@ -296,6 +298,8 @@ export interface ObjectSchema<T extends object | null | undefined = object>
     nullable(isNullable?: boolean): ObjectSchema<T>;
     required(message?: TestOptionsMessage): ObjectSchema<Exclude<T, undefined>>;
     notRequired(): ObjectSchema<T | undefined>;
+    concat(schema: this): this;
+    concat<U extends object>(schema: ObjectSchema<U>): ObjectSchema<T & U>;
 }
 
 export type TransformFunction<T> = (
@@ -511,7 +515,8 @@ type KeyOfUndefined<T> = {
     [P in keyof T]-?: undefined extends T[P] ? P : never
 }[keyof T];
 
+type Id<T> = {[K in keyof T]: T[K]};
 type RequiredProps<T> = Pick<T, Exclude<keyof T, KeyOfUndefined<T>>>;
 type NotRequiredProps<T> = Partial<Pick<T, KeyOfUndefined<T>>>;
-type InnerInferType<T> = NotRequiredProps<T> & RequiredProps<T>;
+type InnerInferType<T> = Id<NotRequiredProps<T> & RequiredProps<T>>;
 type InferredArrayType<T> = T extends Array<infer U> ? U : T;

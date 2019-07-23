@@ -1,4 +1,4 @@
-// Type definitions for webpack 4.4
+// Type definitions for webpack 4.32
 // Project: https://github.com/webpack/webpack
 // Definitions by: Qubo <https://github.com/tkqubo>
 //                 Benjamin Lim <https://github.com/bumbleblym>
@@ -661,6 +661,10 @@ declare namespace webpack {
             namedModules?: boolean;
             /** Instead of numeric ids, give chunks readable names for better debugging. */
             namedChunks?: boolean;
+            /** Tells webpack which algorithm to use when choosing module ids. Default false. */
+            moduleIds?: boolean | "natural" | "named" | "hashed" | "size" | "total-size";
+            /** Tells webpack which algorithm to use when choosing chunk ids. Default false. */
+            chunkIds?: boolean | "natural" | "named" | "size" | "total-size";
             /** Defines the process.env.NODE_ENV constant to a compile-time-constant value. This allows to remove development only code from code. */
             nodeEnv?: string | false;
             /** Use the minimizer (optimization.minimizer, by default uglify-js) to minimize output assets. */
@@ -1767,8 +1771,9 @@ declare namespace webpack {
             cacheable(flag?: boolean): void;
 
             /**
-             * loaders = [{request: string, path: string, query: string, module: function}]
              * An array of all the loaders. It is writeable in the pitch phase.
+             * loaders = [{request: string, path: string, query: string, module: function}]
+             *
              * In the example:
              * [
              *   { request: "/abc/loader1.js?xyz",
@@ -1920,6 +1925,11 @@ declare namespace webpack {
              * Access to the compilation's inputFileSystem property.
              */
             fs: any;
+
+            /**
+             * Which mode is webpack running.
+             */
+            mode: 'production' | 'development' | 'none';
 
             /**
              * Hacky access to the Compilation object of webpack.
